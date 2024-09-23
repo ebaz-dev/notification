@@ -3,6 +3,11 @@ import { Message } from "node-nats-streaming";
 import { queueGroupName } from "./queue-group-name";
 import axios from "axios";
 import { AuthEventSubjects, UserCreatedEvent } from "@ebazdev/auth";
+import https from "https";
+
+const agent = new https.Agent({
+  rejectUnauthorized: false,
+});
 
 export class UserCreatedListener extends Listener<UserCreatedEvent> {
   subject: AuthEventSubjects.UserCreated = AuthEventSubjects.UserCreated;
@@ -24,6 +29,7 @@ export class UserCreatedListener extends Listener<UserCreatedEvent> {
                 "eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiaWF0IjoxNTE2MjM5MDIyfQ",
               "Content-Type": "application/json",
             },
+            httpsAgent: agent,
           }
         );
       }
