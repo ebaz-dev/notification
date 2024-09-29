@@ -68,7 +68,7 @@ jobs:
             fi
             cd $INFRA_DIR
             kubectl apply -f notification-depl.yaml
-            kubectl set image deployment/notificaiton-depl notification=${{secrets.DOCKER_USERNAME}}/notificaiton:${{ github.sha }}  # Update the deployment image
+            kubectl set image deployment/notificaiton-depl notification=${{secrets.DOCKER_USERNAME}}/notification:${{ github.sha }}  # Update the deployment image
             kubectl annotate deployment notificaiton-depl kubernetes.io/change-cause="Updated image to $(date)" --overwrite  # Optional annotation
             echo "Deployment completed."
           EOF
