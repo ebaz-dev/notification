@@ -69,11 +69,11 @@ jobs:
               git pull
             fi
             cd $INFRA_DIR
-            kubectl apply -f ${SERVICE_NAME}-depl.yaml
+            kubectl apply -f ${{ env.SERVICE_NAME }}-depl.yaml
             
             # Use the service name variable here
-            kubectl set image deployment/${{ env.SERVICE_NAME }}-depl ${SERVICE_NAME}=${{ secrets.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
-            kubectl annotate deployment ${SERVICE_NAME}-depl kubernetes.io/change-cause="Updated image to $(date)" --overwrite
+            kubectl set image deployment/${{ env.SERVICE_NAME }}-depl ${{ env.SERVICE_NAME }}=${{ secrets.DOCKER_USERNAME }}/${{ env.SERVICE_NAME }}:${{ github.sha }}
+            kubectl annotate deployment ${{ env.SERVICE_NAME }}-depl kubernetes.io/change-cause="Updated image to $(date)" --overwrite
             
             echo "Deployment completed."
           EOF
