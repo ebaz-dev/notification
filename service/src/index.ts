@@ -4,6 +4,7 @@ import { natsWrapper } from "./nats-wrapper";
 import dotenv from "dotenv";
 import { SendSMSListener } from "./events/listener/send-sms-listener";
 import { UserCreatedListener } from "./events/listener/user-created-listener";
+import * as admin from "firebase-admin";
 dotenv.config();
 
 const start = async () => {
@@ -43,6 +44,35 @@ const start = async () => {
     throw new Error("NATS_PASS must be defined");
   }
 
+  const {
+    FB_TYPE,
+    FB_PROJECT_ID,
+    FB_PRIVATE_KEY_ID,
+    FB_PRIVATE_KEY,
+    FB_CLIENT_EMAIL,
+    FB_CLIENT_ID,
+    FB_AUTH_URI,
+    FB_TOKEN_URI,
+    FB_AUTH_PROVIDER_X509_CERT_URL,
+    FB_CLIENT_X509_CERT_URL
+  } = process.env.NODE_ENV === "development" ? process.env : process.env;
+
+  if (
+    !FB_TYPE ||
+    !FB_PROJECT_ID ||
+    !FB_PRIVATE_KEY_ID ||
+    !FB_PRIVATE_KEY ||
+    !FB_CLIENT_EMAIL ||
+    !FB_CLIENT_ID ||
+    !FB_AUTH_URI ||
+    !FB_TOKEN_URI ||
+    !FB_AUTH_PROVIDER_X509_CERT_URL ||
+    !FB_CLIENT_X509_CERT_URL
+  ) {
+    throw new Error("Get token: Firebase credentials are missing.")
+  }
+
+
   await natsWrapper.connect(
     process.env.NATS_CLUSTER_ID,
     process.env.NATS_CLIENT_ID,
@@ -67,6 +97,24 @@ const start = async () => {
   app.listen(process.env.PORT, () => {
     console.log(`Listening on port ${process.env.PORT}`);
   });
+
+  const params = {
+    type: FB_TYPE,
+    projectId: FB_PROJECT_ID,
+    privateKeyId: FB_PRIVATE_KEY_ID,
+    privateKey: FB_PRIVATE_KEY,
+    clientEmail: FB_CLIENT_EMAIL,
+    clientId: FB_CLIENT_ID,
+    authUri: FB_AUTH_URI,
+    tokenUri: FB_TOKEN_URI,
+    authProviderX509CertUrl: FB_AUTH_PROVIDER_X509_CERT_URL,
+    clientC509CertUrl: FB_CLIENT_X509_CERT_URL,
+  };
+
+  admin.initializeApp({
+    credential: admin.credential.cert(params),
+  })
+
 };
 
 start();

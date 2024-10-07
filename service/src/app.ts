@@ -5,6 +5,7 @@ import { currentUser, errorHandler, NotFoundError } from "@ebazdev/core";
 import cookieSession from "cookie-session";
 import { healthRouter } from "./routes/health";
 import * as dotenv from "dotenv";
+import { sendRouter } from "./routes/send";
 dotenv.config();
 
 const apiPrefix = "/api/v1/notification";
@@ -22,6 +23,7 @@ app.use(
 
 app.use(currentUser);
 app.use(apiPrefix, healthRouter);
+app.use(apiPrefix, sendRouter);
 
 app.all("*", async () => {
   throw new NotFoundError();
