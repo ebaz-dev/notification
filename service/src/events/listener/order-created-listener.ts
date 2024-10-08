@@ -9,20 +9,16 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
   queueGroupName = queueGroupName;
 
   async onMessage(data: OrderCreatedEvent["data"], msg: Message) {
-    try {
-      const { id } = data;
+    const { id } = data;
 
-      const order = await Order.findById(id);
+    const order = await Order.findById(id);
 
-      if (!order) {
-        throw new Error("Order not found");
-      }
-
-      await sendNotifcation({ userId: order.userId, title: `Таны ${order.orderNo} дугаартай захиалга үүслээ`, body: `Таны ${order.orderNo} дугаартай захиалга үүслээ` });
-
-      msg.ack();
-    } catch (error) {
-      console.error("Error processing OrderCreatedEvent:", error);
+    if (!order) {
+      throw new Error("Order not found");
     }
+
+    await sendNotifcation({ userId: order.userId, notification: { title: `Таны ${order.orderNo} дугаартай захиалга үүслээ`, body: `Таны ${order.orderNo} дугаартай захиалга үүслээ` } });
+
+    msg.ack();
   }
 }

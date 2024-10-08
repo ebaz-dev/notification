@@ -1,12 +1,18 @@
 import { Document, Schema, Types, model } from "mongoose";
 import { updateIfCurrentPlugin } from "mongoose-update-if-current";
 
+export enum NotificationStatus {
+    Unread = "unread",
+    Readed = "readed",
+    Deleted = "deleted"
+}
 
 interface NotificationDoc extends Document {
     userId: Types.ObjectId;
     title: string;
     body: string;
     data: any;
+    status: NotificationStatus
 
 }
 
@@ -30,6 +36,7 @@ const notificationSchema = new Schema<NotificationDoc>(
             type: Object,
             required: false,
         },
+        status: { type: String, enum: Object.values(NotificationStatus), required: true, default: NotificationStatus.Unread },
     },
     {
         timestamps: true,
@@ -37,7 +44,6 @@ const notificationSchema = new Schema<NotificationDoc>(
             transform(doc, ret) {
                 ret.id = ret._id;
                 delete ret._id;
-                delete ret.updatedAt;
                 delete ret.version;
             },
         },

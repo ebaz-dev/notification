@@ -6,6 +6,8 @@ import cookieSession from "cookie-session";
 import { healthRouter } from "./routes/health";
 import * as dotenv from "dotenv";
 import { sendRouter } from "./routes/send";
+import { listRouter } from "./routes/list";
+import { statusUpdateRouter } from "./routes/status-update";
 dotenv.config();
 
 const apiPrefix = "/api/v1/notification";
@@ -24,6 +26,8 @@ app.use(
 app.use(currentUser);
 app.use(apiPrefix, healthRouter);
 app.use(apiPrefix, sendRouter);
+app.use(apiPrefix, listRouter);
+app.use(apiPrefix, statusUpdateRouter);
 
 app.all("*", async () => {
   throw new NotFoundError();

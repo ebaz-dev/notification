@@ -5,6 +5,8 @@ import dotenv from "dotenv";
 import { SendSMSListener } from "./events/listener/send-sms-listener";
 import { UserCreatedListener } from "./events/listener/user-created-listener";
 import * as admin from "firebase-admin";
+import { OrderCreatedListener } from "./events/listener/order-created-listener";
+import { OrderConfirmedListener } from "./events/listener/order-confirmed-listener";
 dotenv.config();
 
 const start = async () => {
@@ -90,6 +92,8 @@ const start = async () => {
 
   new SendSMSListener(natsWrapper.client).listen();
   new UserCreatedListener(natsWrapper.client).listen();
+  new OrderCreatedListener(natsWrapper.client).listen();
+  new OrderConfirmedListener(natsWrapper.client).listen();
 
   await mongoose.connect(process.env.MONGO_URI);
   console.log("Connected to DB");
