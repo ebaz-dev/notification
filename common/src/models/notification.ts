@@ -35,6 +35,7 @@ interface NotificationDoc extends Document {
   senderName: string;
   senderId?: Types.ObjectId;
   supplierId?: Types.ObjectId;
+  status: NotificationStatus;
 }
 
 const notificationSchema = new Schema<NotificationDoc>(

@@ -27,7 +27,22 @@ router.get(
     options.sortBy = "createdAt";
     options.sortDir = -1;
     const data = await listAndCount(criteria, Notification, options);
-    res.status(StatusCodes.OK).send(data);
+    const result = data.data.map((notification: any) => {
+      const receiver = notification.receivers.find(
+        (receiver: any) =>
+          receiver.id.toString() === req.currentUser?.id.toString()
+      );
+      notification.status = receiver.status;
+      return notification;
+    });
+    res
+      .status(StatusCodes.OK)
+      .send({
+        data: result,
+        total: data.total,
+        totalPages: data.totalPages,
+        currentPage: data.currentPage,
+      });
   }
 );
 
