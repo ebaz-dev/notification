@@ -6,6 +6,7 @@ import {
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
 import { sendNotifcation } from "../utils/send-notificaion";
+import { sendMassNotifcation } from "../utils/send-mass-notificaion";
 
 const router = express.Router();
 
@@ -16,7 +17,7 @@ router.post(
         const session = await mongoose.startSession();
         session.startTransaction();
         try {
-            const result = await sendNotifcation(req.body);
+            const result = await sendMassNotifcation(req.body);
             await session.commitTransaction();
             res.status(StatusCodes.CREATED).send({result});
         } catch (error: any) {

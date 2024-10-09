@@ -2,7 +2,7 @@ import { Message } from "node-nats-streaming";
 import { Listener } from "@ebazdev/core";
 import { Order, OrderCreatedEvent, OrderEventSubjects } from "@ebazdev/order";
 import { queueGroupName } from "./queue-group-name";
-import { sendNotifcation } from "../../utils/send-notificaion";
+import { sendMassNotifcation } from "../../utils/send-mass-notificaion";
 
 export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
   readonly subject = OrderEventSubjects.OrderCreated;
@@ -17,7 +17,13 @@ export class OrderCreatedListener extends Listener<OrderCreatedEvent> {
       throw new Error("Order not found");
     }
 
-    await sendNotifcation({ userId: order.userId, notification: { title: `Таны ${order.orderNo} дугаартай захиалга үүслээ`, body: `Таны ${order.orderNo} дугаартай захиалга үүслээ` } });
+    await sendMassNotifcation({
+      userIds: [order.userId],
+      title: `Таны ${order.orderNo} дугаартай захиалга үүслээ`,
+      body: `Та дэлгэрэнгүй дээр дарж харна уу.`,
+      senderName: "system",
+      supplierId: order.supplierId,
+    });
 
     msg.ack();
   }
