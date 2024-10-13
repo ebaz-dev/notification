@@ -32,17 +32,14 @@ router.get(
         (receiver: any) =>
           receiver.id.toString() === req.currentUser?.id.toString()
       );
-      notification.status = receiver.status;
-      return notification;
+      return { ...notification.toJSON(), status: receiver.status };
     });
-    res
-      .status(StatusCodes.OK)
-      .send({
-        data: result,
-        total: data.total,
-        totalPages: data.totalPages,
-        currentPage: data.currentPage,
-      });
+    res.status(StatusCodes.OK).send({
+      data: result,
+      total: data.total,
+      totalPages: data.totalPages,
+      currentPage: data.currentPage,
+    });
   }
 );
 

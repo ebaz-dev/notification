@@ -39,7 +39,7 @@ router.post(
         throw new NotFoundError();
       }
       notificaion.receivers.map((receiver, index) => {
-        if (receiver.id === new Types.ObjectId(req.currentUser?.id)) {
+        if (`${receiver.id}` === req.currentUser?.id) {
           notificaion.receivers[index].status = data.status;
         }
       });
