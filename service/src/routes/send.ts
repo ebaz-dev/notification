@@ -5,7 +5,6 @@ import {
 } from "@ebazdev/core";
 import { StatusCodes } from "http-status-codes";
 import mongoose from "mongoose";
-import { sendNotifcation } from "../utils/send-notificaion";
 import { sendMassNotifcation } from "../utils/send-mass-notificaion";
 
 const router = express.Router();
