@@ -1,5 +1,7 @@
 import {
+  aggregateAndCount,
   currentUser,
+  QueryOptions,
   requireAuth,
   validateRequest,
 } from "@ebazdev/core";
@@ -42,7 +44,7 @@ router.get(
     if (req.query.status) {
       secondCriteria.status = req.query.status;
     }
-    const listAggregates: any = [
+    const aggregates: any = [
       { $match: criteria },
       { $unwind: "$receivers" },
       {
@@ -61,32 +63,12 @@ router.get(
       { $match: secondCriteria },
       { $sort: { createdAt: -1 } },
     ];
-    const countAggregates = listAggregates.concat([
-      {
-        $count: "count",
-      },
-    ]);
-    if (req.query.limit) {
-      const limit = Number(req.query.limit);
-      if (req.query.page) {
-        const skip = (Number(req.query.page) - 1) * limit;
-        listAggregates.push({ $skip: skip });
-      }
-      listAggregates.push({ $limit: limit });
-    }
-    const notifications = await Notification.aggregate(listAggregates);
-    const count = await Notification.aggregate(countAggregates);
-    const total = count[0] ? count[0].count : 0;
-    const totalPages = Math.ceil(
-      req.query.limit ? total / Number(req.query.limit) : total / total
-    );
-    const currentPage = req.query.page ? Number(req.query.page) : 1;
-    res.status(StatusCodes.OK).send({
-      data: notifications,
-      total,
-      totalPages,
-      currentPage,
-    });
+
+    const options: QueryOptions = <QueryOptions>req.query;
+    options.sortBy = "updatedAt";
+    options.sortDir = -1;
+    const data = await aggregateAndCount(Notification, options, aggregates);
+    res.status(StatusCodes.OK).send(data);
   }
 );
 
