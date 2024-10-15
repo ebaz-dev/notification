@@ -21,7 +21,7 @@ router.get(
       "receivers.id": new Types.ObjectId(req.currentUser?.id),
     };
     if (req.query.supplierId) {
-      criteria.supplierId = req.query.supplierId;
+      criteria.supplierId = new Types.ObjectId(req.query.supplierId as string);
     }
 
     if (req.query.startDate) {
